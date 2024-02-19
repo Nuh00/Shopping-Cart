@@ -79,7 +79,9 @@ cartContainer.addEventListener('click', event => {
 
 
 
-let quantityPrice = 0; // Initialize total
+// change of the cart logo
+const cartLogo = document.querySelector('[data-icon-amount]')
+
 function renderStoreButton(button){
     button.addEventListener('click', () => {
         const itemId = button.closest('[data-store-item]').dataset.itemId
@@ -93,7 +95,6 @@ function renderStoreButton(button){
         // We need to add the price to the total even if the item is already in the cart
         const price = obj.priceCents
 
-        quantityPrice += price // Add the price to the item total
 
         addTotal(price / 100)// function for the total price
 
@@ -108,6 +109,8 @@ function renderStoreButton(button){
             const nonCartPrice = nonCartItem.innerHTML.slice(1)
             const newPrice = parseFloat(nonCartPrice) + price / 100
             nonCartItem.innerHTML = "$" + newPrice.toFixed(2)
+
+            cartLogo.textContent = parseInt(cartLogo.textContent) + 1
             return;
         }
 
@@ -127,6 +130,9 @@ function renderStoreButton(button){
         cartContainer.appendChild(cartClone)
 
 
+        // Now we need to change the icon amount of the cart button
+        
+        cartLogo.textContent = parseInt(cartLogo.textContent) + 1
         
     })
 }
@@ -160,6 +166,9 @@ function removeFromTotal(price) {
 // // SUbtracting from the total price
 
 function removeFromCartItem(parent, price){
+    if(cartLogo.textContent === "1"){
+        cartLogo.textContent = "0"
+    };
     const quantity = parent.querySelector('[data-cart-quantity]').innerHTML
     if(quantity === "x1"){
         parent.remove()
@@ -171,5 +180,10 @@ function removeFromCartItem(parent, price){
     const cartItemPrice = parent.querySelector('[data-cart-price]').innerHTML.slice(1)
     const newPrice = parseFloat(cartItemPrice) - price
     parent.querySelector('[data-cart-price]').innerHTML = "$" + newPrice.toFixed(2)
+
+    cartLogo.textContent = parseInt(cartLogo.textContent) - 1
+    
+   
+    
 
 }
