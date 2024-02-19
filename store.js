@@ -14,8 +14,6 @@ const container = document.querySelector(".flex.flex-wrap.-m-4");
 
 
 
-
-
 function renderItem(item){
     const clone = storeTemplate.content.cloneNode(true)
 
@@ -30,8 +28,6 @@ function renderItem(item){
     clone.querySelector('[data-image]').src = "https://dummyimage.com/420x260/" + img + "/" + img
 
     container.appendChild(clone)
-
-
 }
 
 // NOW WE START TO WORK ON THE SHOPPING CART BUTTON
@@ -55,27 +51,39 @@ const cartTemplate = document.querySelector('#cart-template')
 export function addToCart(){
     document.addEventListener('DOMContentLoaded', (event) => {
         const storeButton = document.querySelectorAll('[data-store-button]');
-        
         storeButton.forEach(button => {(renderStoreButton(button))});
     });
-    
-    
-    
-    
-    
 }
+
+
+
+export function removingFromCart(){
+cartContainer.addEventListener('click', event => {
+    if (!event.target.matches('[data-remove-from-cart-button]')) {return}
+    const button = event.target
+    const parent = button.closest('.mb-6')
+    const parentId = parent.dataset.cartId
+    const obj = items.find(item => item.id === Number(parentId))
+    const price = obj.priceCents / 100
+    removeFromTotal(price)
+    removeFromCartItem(parent, price)
+
+    
+});
+
+}
+
+
+
+
+
 
 
 let quantityPrice = 0; // Initialize total
 function renderStoreButton(button){
     button.addEventListener('click', () => {
         const itemId = button.closest('[data-store-item]').dataset.itemId
-        
-        
-        
-        
         const cartClone = cartTemplate.content.cloneNode(true)
-        
         const obj = items.find(item => item.id === Number(itemId))
         
         // Check if item is already in the cart
@@ -94,8 +102,12 @@ function renderStoreButton(button){
             const input = existingItem.querySelector('[data-cart-quantity]')
             const quantity = parseInt(input.innerHTML.slice(1))
             input.innerHTML = "x" + (quantity + 1)
-             
 
+            // Add the price to cart for the item that is not being displayed.
+            const nonCartItem = existingItem.querySelector('[data-cart-price]')
+            const nonCartPrice = nonCartItem.innerHTML.slice(1)
+            const newPrice = parseFloat(nonCartPrice) + price / 100
+            nonCartItem.innerHTML = "$" + newPrice.toFixed(2)
             return;
         }
 
@@ -113,8 +125,14 @@ function renderStoreButton(button){
          // Add itemId to the cart item
 
         cartContainer.appendChild(cartClone)
+
+
+        
     })
 }
+
+
+
 
 
 let total = 0; // Initialize total
@@ -124,8 +142,34 @@ function addTotal(price) {
     // Update the total in the UI
     const totalElement = document.querySelector('[data-total]');
     totalElement.textContent = "$" + total.toFixed(2);
+
+    // removeFromTotal(price)
 }
 
-// Adding to the total price
-// Delete items from the shopping cart
-// SUbtracting from the total price
+
+
+
+function removeFromTotal(price) {
+    const totalElementR = document.querySelector('[data-total]');
+    if(totalElementR.textContent === "$0.00") return;
+    const totalElementRValue = parseFloat(totalElementR.textContent.slice(1))
+    totalElementR.textContent = "$" + (totalElementRValue - price).toFixed(2);
+}
+
+
+// // SUbtracting from the total price
+
+function removeFromCartItem(parent, price){
+    const quantity = parent.querySelector('[data-cart-quantity]').innerHTML
+    if(quantity === "x1"){
+        parent.remove()
+        return;
+    }
+    const quantityNumber = parseInt(quantity.slice(1))
+    parent.querySelector('[data-cart-quantity]').innerHTML = "x" + (quantityNumber - 1)
+
+    const cartItemPrice = parent.querySelector('[data-cart-price]').innerHTML.slice(1)
+    const newPrice = parseFloat(cartItemPrice) - price
+    parent.querySelector('[data-cart-price]').innerHTML = "$" + newPrice.toFixed(2)
+
+}
