@@ -5,5 +5,8 @@ setUpStore();
 
 addToCart();
 
+
+
 removingFromCart();
+
 
