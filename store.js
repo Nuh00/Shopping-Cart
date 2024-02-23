@@ -5,7 +5,7 @@ export function setUpStore(){
 
     items.forEach(renderItem)
 
-    loadCartOnRefresh()
+    
     
 }
 
@@ -15,7 +15,11 @@ const container = document.querySelector(".flex.flex-wrap.-m-4");
 const LOCAL_STORAGE_TODO_PREFIX = 'SHOPPING_CART';
 const LOCAL_STORAGE_TODO_KEY = `${LOCAL_STORAGE_TODO_PREFIX}-items`;
 
-const store = []
+export const store = loadCartOnRefresh() || []
+console.log(store)
+addLoad(store)
+
+
 
 
 
@@ -96,7 +100,8 @@ function renderStoreButton(button){
         const obj = items.find(item => item.id === Number(itemId))
         
         store.push(obj)
-        saveCart()
+        console.log(store)
+        saveCart(store)
         
         // Check if item is already in the cart
         const existingItem = Array.from(cartContainer.children).find(child => child.dataset.cartId === itemId);
@@ -204,8 +209,8 @@ function removeFromCartItem(parent, price){
 // Saving the cart to local storage
 
 
-function saveCart(){
-    if(!store) return;
+function saveCart(store){
+    
     localStorage.setItem(LOCAL_STORAGE_TODO_KEY, JSON.stringify(store));
 }
 
@@ -215,13 +220,14 @@ function loadCartOnRefresh(){
     const storeString = localStorage.getItem(LOCAL_STORAGE_TODO_KEY);
     const store = JSON.parse(storeString);
 
-    addLoad(store)
+    
+    return store
     // deleteLoad(store)
 
 }
 
 
-function addLoad(store){
+ export function addLoad(store){
 if(store){
     store.forEach(item => {
         const cartClone = cartTemplate.content.cloneNode(true)

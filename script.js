@@ -1,4 +1,5 @@
-import { setUpStore, addToCart, removingFromCart} from "./store.js";
+import { setUpStore, addToCart, removingFromCart, addLoad, store} from "./store.js";
+
 
 
 setUpStore();
@@ -9,4 +10,4 @@ addToCart();
 
 removingFromCart();
 
-
+addLoad(store);
