@@ -1,13 +1,5 @@
 import items from './items.json'
 
-export function setUpStore(){
-    console.log("Store is set up" )
-
-    items.forEach(renderItem)
-
-    
-    
-}
 
 
 const storeTemplate = document.querySelector('#store-item-template')
@@ -15,12 +7,30 @@ const container = document.querySelector(".flex.flex-wrap.-m-4");
 const LOCAL_STORAGE_TODO_PREFIX = 'SHOPPING_CART';
 const LOCAL_STORAGE_TODO_KEY = `${LOCAL_STORAGE_TODO_PREFIX}-items`;
 
+const cartContainer = document.querySelector('.overflow-y-auto.px-4.pt-4')
+console.log(cartContainer)
+const cartTemplate = document.querySelector('#cart-template')
+
 export const store = loadCartOnRefresh() || []
 console.log(store)
-addLoad(store)
 
 
 
+
+export function setUpStore(){
+    
+
+    items.forEach(renderItem)
+
+    if(store){
+        store.forEach(item => {
+            addLoad(item)
+        })
+    }
+
+    
+    
+}
 
 
 
@@ -54,9 +64,7 @@ cartButton.addEventListener('click', () => {
 
 
 // Adding items to the shopping cart
-const cartContainer = document.querySelector('.overflow-y-auto.px-4.pt-4')
-console.log(cartContainer)
-const cartTemplate = document.querySelector('#cart-template')
+
 
 
 export function addToCart(){// THIS ONE
@@ -227,21 +235,22 @@ function loadCartOnRefresh(){
 }
 
 
- export function addLoad(store){
-if(store){
-    store.forEach(item => {
+ function addLoad(item){
+
+    
         const cartClone = cartTemplate.content.cloneNode(true)
         const img = item.imageColor
         const color = item.name
         const price = item.priceCents
         const id = item.id
         const mb6 = cartClone.querySelector(".mb-6")
-        const existingItem = Array.from(cartContainer.children).find(child => child.dataset.cartId === id);
+        const existingItem = Array.from(cartContainer.children).find(child => child.dataset.cartId == id);
 
 
         addTotal(price / 100)
 
         if(existingItem) {
+            
             const input = existingItem.querySelector('[data-cart-quantity]')
             const quantity = parseInt(input.innerHTML.slice(1))
             input.innerHTML = "x" + (quantity + 1)
@@ -250,6 +259,7 @@ if(store){
             const newPrice = parseFloat(nonCartPrice) + price / 100
             nonCartItem.innerHTML = "$" + newPrice.toFixed(2)
             cartLogo.textContent = parseInt(cartLogo.textContent) + 1
+
             return;
         }
 
@@ -260,8 +270,8 @@ if(store){
         cartClone.querySelector('[data-cart-image]').src = "https://dummyimage.com/420x260/" + img + "/" + img
         cartContainer.appendChild(cartClone)
         cartLogo.textContent = parseInt(cartLogo.textContent) + 1
-    })
-}
+    
+
 
 }
 
