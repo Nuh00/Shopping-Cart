@@ -8,11 +8,11 @@ const LOCAL_STORAGE_TODO_PREFIX = 'SHOPPING_CART';
 const LOCAL_STORAGE_TODO_KEY = `${LOCAL_STORAGE_TODO_PREFIX}-items`;
 
 const cartContainer = document.querySelector('.overflow-y-auto.px-4.pt-4')
-console.log(cartContainer)
+
 const cartTemplate = document.querySelector('#cart-template')
 
 export const store = loadCartOnRefresh() || []
-console.log(store)
+
 
 
 
@@ -79,6 +79,7 @@ export function addToCart(){// THIS ONE
 export function removingFromCart(){// THIS ONE
     cartContainer.addEventListener('click', event => {
         if (!event.target.matches('[data-remove-from-cart-button]')) {return}
+        console.log("clicked")
         const button = event.target
         const parent = button.closest('.mb-6')
         const parentId = parent.dataset.cartId
@@ -113,7 +114,7 @@ function renderStoreButton(button){
         
         // Check if item is already in the cart
         const existingItem = Array.from(cartContainer.children).find(child => child.dataset.cartId === itemId);
-        console.log(existingItem)
+        
         
         // We need to add the price to the total even if the item is already in the cart
         const price = obj.priceCents
@@ -189,26 +190,20 @@ function removeFromTotal(price) {
 // // SUbtracting from the total price
 
 function removeFromCartItem(parent, price){
-    if(cartLogo.textContent === "1"){
-        cartLogo.textContent = "0"
-    };
+    
     const quantity = parent.querySelector('[data-cart-quantity]').innerHTML
     if(quantity === "x1"){
-        parent.remove()
-        total = 0
-        return;
+        parent.remove()   
     }
+
     const quantityNumber = parseInt(quantity.slice(1))
     parent.querySelector('[data-cart-quantity]').innerHTML = "x" + (quantityNumber - 1)
     
     const cartItemPrice = parent.querySelector('[data-cart-price]').innerHTML.slice(1)
     const newPrice = parseFloat(cartItemPrice) - price
     parent.querySelector('[data-cart-price]').innerHTML = "$" + newPrice.toFixed(2)
-    
-    cartLogo.textContent = parseInt(cartLogo.textContent) - 1
-    
-    
-    
+
+    cartLogo.innerHTML = parseInt(cartLogo.innerHTML) - 1
     
 }
 
@@ -274,6 +269,7 @@ function loadCartOnRefresh(){
 
 
 }
+
 
 function deleteLoad(store){
     if(store){
