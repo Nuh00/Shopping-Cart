@@ -79,12 +79,22 @@ export function addToCart(){// THIS ONE
 export function removingFromCart(){// THIS ONE
     cartContainer.addEventListener('click', event => {
         if (!event.target.matches('[data-remove-from-cart-button]')) {return}
-        console.log("clicked")
+        
         const button = event.target
         const parent = button.closest('.mb-6')
         const parentId = parent.dataset.cartId
         const obj = items.find(item => item.id === Number(parentId))
         const price = obj.priceCents / 100
+
+        let index = store.findIndex(item => item.id === Number(parentId));
+        if (index !== -1) {
+            store.splice(index, 1);
+        }
+
+        saveCart(store)
+        
+
+
         removeFromTotal(price)
         removeFromCartItem(parent, price)
         
